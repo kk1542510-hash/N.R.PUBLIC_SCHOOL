@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N.R. Public School | Saharanpur</title>
+
+    <!-- Professional Popups (SweetAlert2) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="https://scontent.fdel27-5.fna.fbcdn.net/v/t39.30808-6/301379224_462731822531471_8509956549566154454_n.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body { 
+            background: #f8f9fa; 
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .back-nav {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #800000;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .btn-back:hover {
+            background: #800000;
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .enquiry-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-top: 6px solid #800000;
+        }
+
+        h2 { color: #800000; margin-bottom: 8px; text-align: center; font-size: 28px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+
+        .form-group { margin-bottom: 22px; }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            color: #444; 
+            font-size: 14px;
+        }
+        
+        label::after {
+            content: " *";
+            color: red;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            background: #fafafa;
+        }
+
+        input:focus, textarea:focus { 
+            border-color: #800000; 
+            background: #fff;
+            box-shadow: 0 0 8px rgba(128,0,0,0.1);
+        }
+
+        .submit-btn {
+            background: #800000;
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.4s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover { 
+            background: #333; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            .enquiry-container { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="back-nav">
+        <a href="index.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <div class="enquiry-container">
+        <h2>Admission Enquiry</h2>
+        <p class="subtitle">Please fill all the details. Our team will contact you shortly.</p>
+
+        <form id="enquiryForm">
+            
+            <div class="form-group">
+                <label>Student Name</label>
+                <input type="text" name="Student_Name" placeholder="Enter full name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Parent/Guardian Name</label>
+                <input type="text" name="Parent_Name" placeholder="Enter parent name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" name="Date_of_Birth" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contact Number</label>
+                <input type="tel" name="Phone_Number" placeholder="Enter 10-digit mobile number" 
+                       required pattern="[0-9]{10}">
+            </div>
+
+            <div class="form-group">
+                <label>Message/Queries</label>
+                <textarea name="Message" rows="4" placeholder="How can we help you?" required></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn" class="submit-btn">Submit Enquiry</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('enquiryForm');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener("submit", e => {
+            e.preventDefault();
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            btn.disabled = true;
+
+            const sheetDbUrl = 'https://sheetdb.io/api/v1/ll5jpfcmv7pwp';
+
+            // Sabhi fields ka data collect kar rahe hain
+            const formData = {
+                Student_Name: form.Student_Name.value,
+                Parent_Name: form.Parent_Name.value,
+                Date_of_Birth: form.Date_of_Birth.value,
+                Phone_Number: form.Phone_Number.value,
+                Message: form.Message.value
+            };
+
+            fetch(sheetDbUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: [formData] }),
+            })
+            .then(response => response.json())
+            .then((data) => {
+                Swal.fire({
+                    title: 'Submitted Successfully!',
+                    text: 'Thank you for contacting N.R. Public School. We have received your details.',
+                    icon: 'success',
+                    confirmButtonColor: '#800000',
+                    timer: 5000
+                });
+
+                form.reset();
+                btn.innerHTML = 'Submit Enquiry';
+                btn.disabled = false;
+            })
+            .catch((error) => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#800000'
+                });
+                btn.innerHTML = 'Submit Enquiry';
+                btn.disabled = false;
+            });
+        });
+    </script>
+
+</body>
+</html>
